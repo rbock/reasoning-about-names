@@ -184,7 +184,7 @@ Who likes preprocessor macros? In quite a few cases, macros could be made obsole
     template <typename T>                                \
     struct name##_impl<T, std::void_t<typename T::name>> \
     {                                                    \
-      using type = typename T::name;                     \
+      using type = std::true_type;                       \
     };                                                   \
   }                                                      \
   template <typename T>                                  \
