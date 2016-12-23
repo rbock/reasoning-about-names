@@ -249,6 +249,33 @@ struct my_struct
 auto x = my_struct{$"id"|17, $"value"|42};
 ```
 
+## Create mock objects
+In [GMock](https://github.com/google/gmock) and [Trompe l'Oeil](https://github.com/rollbear/trompeloeil) macros are used manually to create mock objects. It is possible to do this automatically if you are willing to accept undefined behaviour, as shown with [FakeIt](https://github.com/eranpeer/fakeit) and [HippoMocks](https://github.com/dascandy/hippomocks). Combining this proposal with the reflexpr proposal extended with function reflection allows a mocking framework that does not invoke manual labor or undefined behaviour:
+
+```C++
+#include <experimental/reflexpr>
+
+using meta::get_base_name_v;
+using meta::get_return_type_t;
+using meta::get_functions_v;
+
+template <typename Interface, typename Function, size_t argCount>
+struct ReifyFunction {
+  virtual Interface* GetMock() = 0;
+  get_return_type_t<Function> $get_base_name_v<Function>() {
+    return MockingLibrary::HandleMockCall(GetMock(), get_base_name_v<Function>());
+  }
+};
+
+template <typename Interface>
+struct Mock : Interface, ReifyFunction<meta::get_functions_v<reflexpr(Interface)> >... {
+  Interface* GetMock() override { return this; }
+};
+
+```
+
+The same approach could be taken for any generateable function that would be defined from an interface. Examples are serialization and RPC proxy instantiation. Extending this to N-argument functions is possible.
+
 ## Replace CRTP in some situations
 In [sqlpp11](https://github.com/rbock/sqlpp11), variadic CRTP is used in several places to add configurable data members or functions to structs. Here is a simplified example and a way it could be rewritten with names and variadic composition.
 
