@@ -85,7 +85,7 @@ C++ Gurus tell us things like
   - Prefer composition to inheritance (Herb Sutter)
   - Inheritance is the base class of evil (Sean Parent)
 
-But while we have single variadic inheritance (used for inside of tuples, for instance), we have no variadic composition.
+But while we have variadic inheritance (used for inside of tuples, for instance), we have no variadic composition.
 The reason is rather obvious: Every member of a class/struct needs to have a name. If we had name literals as sketched above, we could easily add variadic composition to the language, e.g. like this
 
 ```C++
